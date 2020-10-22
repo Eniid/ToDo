@@ -22,13 +22,14 @@
 					<!-- These are here just to show the structure of the list items -->
 					<!-- List items should get the class `editing` when editing and `completed` when marked as completed -->
 					<template x-for="todo in filtedTodo", :key="todo.id">
-					<li :class="{completed : todo.completed}">
+					<li :class="{completed : todo.completed, editing: todo.edidting}" >
 						<div class="view">
 							<input @click="toggleCompleted(todo)" x-model="todo.completed" class="toggle" type="checkbox">
-							<label x-text="todo.title">Taste JavaScript</label>
+							<label @dblclick="edit(todo, $nextTick, $refs.editTodoFild)" x-text="todo.title"></label>
 							<button @click="removeTodo(todo)" class="destroy"></button>
 						</div>
-						<input class="edit" value="Create a TodoMVC template">
+						<input @keyup.enter="validateEditing(todo)" 
+						@keyup.escape="cancelEdit(todo)" class="edit" x-model="todo.title" x-ref="editTodoFild" value="Create a TodoMVC template">
 					</li>
 				</template>
 					
@@ -41,14 +42,14 @@
 				<!-- Remove this if you don't implement routing -->
 				<ul class="filters">
 					<li>
-						<a 
+						<a :class="{selected:filter==='all'}"
 						@click.prevent="filter='all'" class="selected" href="#/">All</a>
 					</li>
 					<li>
-						<a @click.prevent="filter='active'"  href="#/active">Active</a>
+						<a :class="{selected:filter==='active'}" @click.prevent="filter='active'"  href="#/active">Active</a>
 					</li>
 					<li>
-						<a @click.prevent="filter='completed'"  href="#/completed">Completed</a>
+						<a :class="{selected:filter==='completed'}" @click.prevent="filter='completed'"  href="#/completed">Completed</a>
 					</li>
 				</ul>
 				<!-- Hidden if no completed items are left ↓ -->

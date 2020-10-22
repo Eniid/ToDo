@@ -3,8 +3,10 @@ import 'alpinejs'
 console.log('test');
 window.data = function() {
     return{
+        edidting : false,
         filter : 'all',
         todos: [],
+        todoEditing : null, 
         newTodoTitle: null, 
         get activeTodos (){
             return this.todos.filter(todo => todo.completed !== true); 
@@ -43,6 +45,26 @@ window.data = function() {
         toggleCompleted(todo) {
             todo.completed = !todo.completed
         },
-
+        edit(todo, tick, field){
+            todo.cachedTitle = todo.title
+            if(this.todoEditing){
+                delete this.todoEditing.edidting
+            }
+            this.todoEditing = todo
+            todo.edidting = true
+            tick(()=> {field.focus()}, 1000)
+        },
+        validateEditing(todo) {
+            if(todo.title.trim()){
+                delete todo.edidting
+            } else {
+                this.removeTodo(todo)
+            }
+        },
+        cancelEdit(todo) {
+            todo.title = todo.cachedTitle
+            delete todo.cachedTitle
+            delete todo.edidting
+        }
     }
 }
